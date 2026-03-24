@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple QR Test</title>
+    <script src="lib/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        #qrcode {
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+        }
+        .url {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        button {
+            background: #1E5128;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple QR Code Test</h1>
+    <p>This is the simplest possible QR code test.</p>
+
+    <div class="url" id="url-display">URL will appear here</div>
+
+    <div id="qrcode"></div>
+
+    <button onclick="generateQR()">Generate QR Code</button>
+    <button onclick="window.location.href='http://localhost:8080/'">Back to Main App</button>
+
+    <script>
+        function generateQR() {
+            const url = window.location.href;
+            document.getElementById('url-display').textContent = url;
+
+            const container = document.getElementById('qrcode');
+            container.innerHTML = '';
+
+            try {
+                new QRCode(container, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff"
+                });
+                alert('QR code generated successfully! Try scanning it.');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Auto-generate on load
+        window.onload = generateQR;
+    </script>
+</body>
+</html>

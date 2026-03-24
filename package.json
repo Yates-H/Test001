@@ -1,0 +1,26 @@
+{
+  "name": "byd-dmi-cost-calculator",
+  "version": "1.0.0",
+  "description": "BYD DM-i 混动车型成本计算器 - 帮助用户计算购车、使用和维护成本",
+  "main": "index.html",
+  "scripts": {
+    "deploy": "gh-pages -d .",
+    "predeploy": "npm run build",
+    "build": "echo 'Build step not required for static site'"
+  },
+  "keywords": [
+    "byd",
+    "dmi",
+    "calculator",
+    "cost",
+    "car",
+    "electric",
+    "hybrid"
+  ],
+  "author": "Yates-H",
+  "license": "MIT",
+  "homepage": "https://Yates-H.github.io/Test001",
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}

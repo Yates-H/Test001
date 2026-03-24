@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Test</title>
+    <script src="lib/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #qrcode-container {
+            margin: 20px 0;
+        }
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        button {
+            background: #1E5128;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Test Page</h1>
+
+    <div class="test-section">
+        <h2>Test 1: Current Page URL</h2>
+        <p>This generates a QR code for the current page URL:</p>
+        <div class="url-display" id="current-url"></div>
+        <div id="qrcode-current"></div>
+        <button onclick="generateCurrentQR()">Generate QR Code</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Fixed HTTPS URL</h2>
+        <p>This generates a QR code for a fixed HTTPS URL (simulating deployed site):</p>
+        <div class="url-display">https://example.com/byd-dmi-calculator/</div>
+        <div id="qrcode-https"></div>
+        <button onclick="generateHTTPSQR()">Generate HTTPS QR Code</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Localhost URL</h2>
+        <p>This generates a QR code for localhost URL:</p>
+        <div class="url-display">http://localhost:8080/</div>
+        <div id="qrcode-localhost"></div>
+        <button onclick="generateLocalhostQR()">Generate Localhost QR Code</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Debug Information</h2>
+        <div id="debug-info"></div>
+    </div>
+
+    <script>
+        function generateCurrentQR() {
+            const url = window.location.href;
+            document.getElementById('current-url').textContent = url;
+
+            const container = document.getElementById('qrcode-current');
+            container.innerHTML = '';
+
+            try {
+                new QRCode(container, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#1E5128",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                logDebug('Current URL QR generated successfully: ' + url);
+            } catch (error) {
+                logDebug('Error generating current URL QR: ' + error.message);
+            }
+        }
+
+        function generateHTTPSQR() {
+            const url = 'https://example.com/byd-dmi-calculator/';
+            const container = document.getElementById('qrcode-https');
+            container.innerHTML = '';
+
+            try {
+                new QRCode(container, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#1E5128",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                logDebug('HTTPS URL QR generated successfully: ' + url);
+            } catch (error) {
+                logDebug('Error generating HTTPS QR: ' + error.message);
+            }
+        }
+
+        function generateLocalhostQR() {
+            const url = 'http://localhost:8080/';
+            const container = document.getElementById('qrcode-localhost');
+            container.innerHTML = '';
+
+            try {
+                new QRCode(container, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#1E5128",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                logDebug('Localhost QR generated successfully: ' + url);
+            } catch (error) {
+                logDebug('Error generating localhost QR: ' + error.message);
+            }
+        }
+
+        function logDebug(message) {
+            const debugDiv = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('Page loaded. Current URL: ' + window.location.href);
+            logDebug('User agent: ' + navigator.userAgent);
+        });
+    </script>
+</body>
+</html>

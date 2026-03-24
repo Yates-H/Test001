@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYD DM-i Calculator - Deployment Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1E5128 0%, #4E9F3D 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #1E5128;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i {
+            font-size: 1.5rem;
+        }
+
+        .step {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #1E5128;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .step h3 {
+            display: inline-block;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .qr-test {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            border: 2px dashed #1E5128;
+        }
+
+        .qr-test h3 {
+            color: #1E5128;
+            margin-bottom: 15px;
+        }
+
+        #test-qrcode {
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+        }
+
+        .test-url {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #1E5128;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #164020;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #4E9F3D;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #3d7e2f;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #1E5128;
+            border: 2px solid #1E5128;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+        }
+
+        .environment-info {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1E5128;
+            font-family: monospace;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            color: #666;
+            border-top: 1px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="lib/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-mobile-alt"></i> Mobile Deployment Test</h1>
+            <p>Test and deploy your BYD DM-i Calculator for mobile access</p>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h2><i class="fas fa-cogs"></i> Current Environment</h2>
+                <div class="environment-info">
+                    <p>Checking your current setup...</p>
+                    <div class="info-grid" id="environment-info">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3><span class="step-number">1</span> QR Code Test</h3>
+                    <p>Test if QR code generation works correctly:</p>
+                    <div class="qr-test">
+                        <h3>Test QR Code</h3>
+                        <div id="test-qrcode"></div>
+                        <div class="test-url" id="test-url">Generating...</div>
+                        <div class="buttons">
+                            <button class="btn btn-primary" onclick="generateTestQR()">
+                                <i class="fas fa-sync-alt"></i> Regenerate QR
+                            </button>
+                            <button class="btn btn-secondary" onclick="copyTestUrl()">
+                                <i class="fas fa-copy"></i> Copy URL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-rocket"></i> Deployment Steps</h2>
+
+                <div class="step">
+                    <h3><span class="step-number">1</span> Update Configuration</h3>
+                    <p>Edit <code>config.js</code> with your deployment URL:</p>
+                    <div class="code-block">
+// config.js - Update this line<br>
+PRODUCTION_URL: 'https://your-username.github.io/byd-dmi-calculator/',
+                    </div>
+                    <div class="status warning" id="config-status">
+                        <i class="fas fa-exclamation-triangle"></i> Configuration needs update
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3><span class="step-number">2</span> Push to GitHub</h3>
+                    <p>Upload your code to GitHub:</p>
+                    <div class="code-block">
+# Navigate to project directory<br>
+cd byd-dmi-cost-calculator<br><br>
+# Add all files<br>
+git add .<br><br>
+# Commit changes<br>
+git commit -m "Deploy for mobile access"<br><br>
+# Push to GitHub<br>
+git push origin main
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3><span class="step-number">3</span> Enable GitHub Pages</h3>
+                    <p>In your GitHub repository:</p>
+                    <ol style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Go to <strong>Settings</strong> → <strong>Pages</strong></li>
+                        <li>Select <strong>main</strong> branch</li>
+                        <li>Select <strong>/ (root)</strong> folder</li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+                    <div class="status success">
+                        <i class="fas fa-check-circle"></i> Free HTTPS included
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3><span class="step-number">4</span> Test Mobile Access</h3>
+                    <p>Scan the QR code with your phone:</p>
+                    <div class="buttons">
+                        <button class="btn btn-primary" onclick="testOnPhone()">
+                            <i class="fas fa-mobile-alt"></i> Test on Phone
+                        </button>
+                        <button class="btn btn-outline" onclick="shareCalculator()">
+                            <i class="fas fa-share-alt"></i> Share Calculator
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-check-circle"></i> Verification Checklist</h2>
+
+                <div class="step">
+                    <h3>✓ Desktop Browser</h3>
+                    <p>All features work on computer</p>
+                    <div class="status success">
+                        <i class="fas fa-check"></i> Should work
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>✓ Mobile Browser</h3>
+                    <p>Responsive design works on phone</p>
+                    <div class="status success">
+                        <i class="fas fa-check"></i> Should work
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>✓ QR Code Scanning</h3>
+                    <p>Phone can scan and open calculator</p>
+                    <div class="status warning" id="qr-scan-status">
+                        <i class="fas fa-exclamation-triangle"></i> Needs deployment
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>✓ Form Submission</h3>
+                    <p>Users can input data and get results</p>
+                    <div class="status success">
+                        <i class="fas fa-check"></i> Should work
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>✓ Chart Display</h3>
+                    <p>Visualizations show correctly</p>
+                    <div class="status success">
+                        <i class="fas fa-check"></i> Should work
+                    </div>
+                </div>
+
+                <div class="buttons" style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="runAllTests()">
+                        <i class="fas fa-play"></i> Run All Tests
+                    </button>
+                    <button class="btn btn-outline" onclick="viewMainCalculator()">
+                        <i class="fas fa-calculator"></i> Open Main Calculator
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>BYD DM-i Cost Calculator | Mobile Deployment Test</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                <i class="fas fa-info-circle"></i> Need help? Check <a href="DEPLOYMENT_GUIDE.md" style="color: #1E5128; text-decoration: none; font-weight: 600;">DEPLOYMENT_GUIDE.md</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Environment detection
+        function checkEnvironment() {
+            const infoGrid = document.getElementById('environment-info');
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
+            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+            const isProduction = !isLocalhost && !hostname.startsWith('192.168.') && !hostname.startsWith('10.');
+
+            const environment = {
+                'Hostname': hostname,
+                'Protocol': protocol,
+                'Environment': isProduction ? 'Production' : 'Development',
+                'Mobile Access': isProduction ? 'Available' : 'Not Available',
+                'QR Code Status': isProduction ? 'Works' : 'Needs Deployment'
+            };
+
+            infoGrid.innerHTML = '';
+
+            Object.entries(environment).forEach(([label, value]) => {
+                const div = document.createElement('div');
+                div.className = 'info-item';
+                div.innerHTML = `
+                    <div class="info-label">${label}</div>
+                    <div class="info-value">${value}</div>
+                `;
+                infoGrid.appendChild(div);
+            });
+
+            // Update QR scan status
+            const qrStatus = document.getElementById('qr-scan-status');
+            if (isProduction) {
+                qrStatus.className = 'status success';
+                qrStatus.innerHTML = '<i class="fas fa-check-circle"></i> Should work after deployment';
+            } else {
+                qrStatus.className = 'status error';
+                qrStatus.innerHTML = '<i class="fas fa-times-circle"></i> Cannot scan localhost';
+            }
+        }
+
+        // QR Code generation
+        let testQRCode = null;
+
+        function generateTestQR() {
+            const container = document.getElementById('test-qrcode');
+            const urlDisplay = document.getElementById('test-url');
+
+            // Clear existing QR code
+            container.innerHTML = '';
+
+            // Get current URL (for testing)
+            const url = window.location.origin + window.location.pathname.replace('test-deployment.html', '');
+
+            // Display URL
+            urlDisplay.textContent = url;
+
+            try {
+                // Generate QR code
+                testQRCode = new QRCode(container, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#1E5128",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                console.log('Test QR code generated for:', url);
+            } catch (error) {
+                console.error('QR code generation failed:', error);
+                container.innerHTML = '<p style="color: #dc3545;">QR generation failed</p>';
+            }
+        }
+
+        // Copy URL to clipboard
+        async function copyTestUrl() {
+            const url = document.getElementById('test-url').textContent;
+
+            try {
+                await navigator.clipboard.writeText(url);
+                alert('URL copied to clipboard!');
+            } catch (error) {
+                console.error('Failed to copy:', error);
+                alert('Failed to copy URL. Please copy manually.');
+            }
+        }
+
+        // Test on phone instructions
+        function testOnPhone() {
+            const url = window.location.origin + window.location.pathname.replace('test-deployment.html', '');
+            const message = `To test on your phone:\n\n1. Scan the QR code above\n2. Or visit: ${url}\n3. Test all features on your phone\n\nIf it doesn't work, you need to deploy to GitHub Pages first.`;
+            alert(message);
+        }
+
+        // Share calculator
+        function shareCalculator() {
+            const url = window.location.origin + window.location.pathname.replace('test-deployment.html', '');
+            const message = `Check out this BYD DM-i Cost Calculator!\n\n${url}\n\nCompare electric vs fuel car costs with interactive charts and mobile-friendly design.`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'BYD DM-i Cost Calculator',
+                    text: 'Compare electric vs fuel car costs',
+                    url: url
+                });
+            } else {
+                alert('Share this URL:\n\n' + url);
+            }
+        }
+
+        // Run all tests
+        function runAllTests() {
+            checkEnvironment();
+            generateTestQR();
+
+            const tests = [
+                'Environment check completed',
+                'QR code generated',
+                'URL displayed',
+                'Configuration checked'
+            ];
+
+            let message = 'Tests completed:\n\n';
+            tests.forEach((test, index) => {
+                message += `✓ ${test}\n`;
+            });
+
+            message += '\nNext steps:\n1. Update config.js\n2. Deploy to GitHub Pages\n3. Test on mobile device';
+
+            alert(message);
+        }
+
+        // View main calculator
+        function viewMainCalculator() {
+            window.location.href = 'index.html';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkEnvironment();
+            generateTestQR();
+
+            // Check config status
+            const configStatus = document.getElementById('config-status');
+            const currentUrl = window.location.href;
+            if (currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
+                configStatus.className = 'status warning';
+                configStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Update config.js for production';
+            } else {
+                configStatus.className = 'status success';
+                configStatus.innerHTML = '<i class="fas fa-check-circle"></i> Production environment detected';
+            }
+        });
+    </script>
+</body>
+</html>

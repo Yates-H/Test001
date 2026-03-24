@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kalkulator perbandingan biaya penggunaan BYD DM-i vs mobil bensin untuk pasar Indonesia">
+    <meta name="keywords" content="BYD, DM-i, mobil listrik, mobil bensin, kalkulator biaya, Indonesia, hemat biaya">
+    <meta name="author" content="BYD Indonesia">
+
+    <title>BYD DM-i vs Mobil Bensin - Kalkulator Biaya</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with logo and language switcher -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-placeholder">
+                    <i class="fas fa-car fa-2x"></i>
+                    <span class="logo-text">BYD</span>
+                </div>
+                <h1 data-i18n="appTitle">BYD DM-i vs Mobil Bensin - Kalkulator Biaya</h1>
+            </div>
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="id" aria-label="Switch to Indonesian">
+                    <i class="fas fa-flag"></i> ID
+                </button>
+                <button class="lang-btn" data-lang="en" aria-label="Switch to English">
+                    <i class="fas fa-flag-usa"></i> EN
+                </button>
+            </div>
+        </header>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            <!-- Left: Parameter input section -->
+            <section class="input-section" aria-labelledby="input-section-title">
+                <div class="section-header">
+                    <h2 id="input-section-title" data-i18n="parameterSettings">
+                        <i class="fas fa-sliders-h"></i> Pengaturan Parameter
+                    </h2>
+                    <button class="reset-btn" id="reset-btn" data-i18n="resetToDefaults">
+                        <i class="fas fa-redo"></i> Setel Ulang
+                    </button>
+                </div>
+
+                <div class="input-grid">
+                    <!-- Fuel Price -->
+                    <div class="input-group">
+                        <label for="fuel-price" data-i18n="fuelPrice">
+                            <i class="fas fa-gas-pump"></i> Harga Bensin (IDR/L)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="number" id="fuel-price" value="15000" min="0" step="100"
+                                   aria-describedby="fuel-price-help">
+                            <span class="input-suffix">IDR</span>
+                        </div>
+                        <div class="input-help" id="fuel-price-help" data-i18n="fuelPriceHelp">
+                            Harga bensin per liter di Indonesia
+                        </div>
+                    </div>
+
+                    <!-- Electricity Price -->
+                    <div class="input-group">
+                        <label for="electricity-price" data-i18n="electricityPrice">
+                            <i class="fas fa-bolt"></i> Harga Listrik (IDR/kWh)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="number" id="electricity-price" value="1500" min="0" step="50"
+                                   aria-describedby="electricity-price-help">
+                            <span class="input-suffix">IDR</span>
+                        </div>
+                        <div class="input-help" id="electricity-price-help" data-i18n="electricityPriceHelp">
+                            Harga listrik per kilowatt-hour
+                        </div>
+                    </div>
+
+                    <!-- Monthly Distance -->
+                    <div class="input-group">
+                        <label for="monthly-distance" data-i18n="monthlyDistance">
+                            <i class="fas fa-road"></i> Jarak Bulanan (km/bulan)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="number" id="monthly-distance" value="1500" min="0" step="100"
+                                   aria-describedby="monthly-distance-help">
+                            <span class="input-suffix">km</span>
+                        </div>
+                        <div class="input-help" id="monthly-distance-help" data-i18n="monthlyDistanceHelp">
+                            Rata-rata jarak tempuh per bulan
+                        </div>
+                    </div>
+
+                    <!-- Fuel Car Consumption -->
+                    <div class="input-group">
+                        <label for="fuel-consumption" data-i18n="fuelCarConsumption">
+                            <i class="fas fa-car-side"></i> Konsumsi Bensin Mobil (L/100km)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="number" id="fuel-consumption" value="8" min="0" step="0.1"
+                                   aria-describedby="fuel-consumption-help">
+                            <span class="input-suffix">L/100km</span>
+                        </div>
+                        <div class="input-help" id="fuel-consumption-help" data-i18n="fuelCarConsumptionHelp">
+                            Konsumsi bahan bakar mobil bensin
+                        </div>
+                    </div>
+
+                    <!-- DM-i Electric Consumption -->
+                    <div class="input-group">
+                        <label for="dmi-electric-consumption" data-i18n="dmiElectricConsumption">
+                            <i class="fas fa-charging-station"></i> Konsumsi Listrik DM-i (kWh/100km)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="number" id="dmi-electric-consumption" value="15" min="0" step="0.1"
+                                   aria-describedby="dmi-electric-consumption-help">
+                            <span class="input-suffix">kWh/100km</span>
+                        </div>
+                        <div class="input-help" id="dmi-electric-consumption-help" data-i18n="dmiElectricConsumptionHelp">
+                            Konsumsi listrik BYD DM-i
+                        </div>
+                    </div>
+
+                    <!-- DM-i Fuel Consumption -->
+                    <div class="input-group">
+                        <label for="dmi-fuel-consumption" data-i18n="dmiFuelConsumption">
+                            <i class="fas fa-gas-pump"></i> Konsumsi Bensin DM-i (L/100km)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="number" id="dmi-fuel-consumption" value="5" min="0" step="0.1"
+                                   aria-describedby="dmi-fuel-consumption-help">
+                            <span class="input-suffix">L/100km</span>
+                        </div>
+                        <div class="input-help" id="dmi-fuel-consumption-help" data-i18n="dmiFuelConsumptionHelp">
+                            Konsumsi bensin mode hybrid BYD DM-i
+                        </div>
+                    </div>
+
+                    <!-- Hybrid Ratio -->
+                    <div class="input-group">
+                        <label for="hybrid-ratio" data-i18n="hybridRatio">
+                            <i class="fas fa-percentage"></i> Rasio Hybrid (%)
+                        </label>
+                        <div class="input-with-info">
+                            <input type="range" id="hybrid-ratio" value="30" min="0" max="100" step="1"
+                                   aria-describedby="hybrid-ratio-help hybrid-ratio-value">
+                            <span class="range-value" id="hybrid-ratio-value">30%</span>
+                        </div>
+                        <div class="input-help" id="hybrid-ratio-help" data-i18n="hybridRatioHelp">
+                            Persentase penggunaan mode hybrid
+                        </div>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" id="calculate-btn" data-i18n="calculate">
+                    <i class="fas fa-calculator"></i> Hitung Biaya
+                </button>
+            </section>
+
+            <!-- Right: Result display section -->
+            <section class="result-section" aria-labelledby="result-section-title">
+                <h2 id="result-section-title" data-i18n="costComparison">
+                    <i class="fas fa-chart-bar"></i> Perbandingan Biaya
+                </h2>
+
+                <!-- Result cards -->
+                <div class="result-cards">
+                    <!-- Fuel Car Card -->
+                    <div class="card fuel-card">
+                        <div class="card-header">
+                            <i class="fas fa-gas-pump card-icon"></i>
+                            <h3 data-i18n="fuelCar">Mobil Bensin</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="cost-label" data-i18n="monthlyCost">Biaya Bulanan</div>
+                            <div class="cost" id="fuel-cost" aria-live="polite">IDR 0</div>
+                            <div class="cost-detail" data-i18n="perKm">per km: <span id="fuel-cost-per-km">IDR 0</span></div>
+                        </div>
+                    </div>
+
+                    <!-- DM-i Card -->
+                    <div class="card dmi-card">
+                        <div class="card-header">
+                            <i class="fas fa-charging-station card-icon"></i>
+                            <h3 data-i18n="dmiCar">BYD DM-i</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="cost-label" data-i18n="monthlyCost">Biaya Bulanan</div>
+                            <div class="cost" id="dmi-cost" aria-live="polite">IDR 0</div>
+                            <div class="cost-detail" data-i18n="perKm">per km: <span id="dmi-cost-per-km">IDR 0</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Savings Card -->
+                    <div class="card savings-card">
+                        <div class="card-header">
+                            <i class="fas fa-piggy-bank card-icon"></i>
+                            <h3 data-i18n="savings">Penghematan</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="savings-label" data-i18n="monthlySavings">Penghematan Bulanan</div>
+                            <div class="savings-amount" id="savings-amount" aria-live="polite">IDR 0</div>
+                            <div class="savings-percentage" id="savings-percentage">0%</div>
+                            <div class="savings-detail" data-i18n="annualSavings">Tahunan: <span id="annual-savings">IDR 0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart container -->
+                <div class="chart-container">
+                    <h3 data-i18n="costChart">Grafik Perbandingan Biaya</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="cost-chart" aria-label="Cost comparison chart" role="img"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-color fuel-legend"></span>
+                            <span data-i18n="fuelCar">Mobil Bensin</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color dmi-legend"></span>
+                            <span data-i18n="dmiCar">BYD DM-i</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost breakdown -->
+                <div class="breakdown-container">
+                    <h3 data-i18n="costBreakdown">Rincian Biaya</h3>
+                    <div class="breakdown-grid">
+                        <div class="breakdown-item">
+                            <div class="breakdown-label" data-i18n="fuelCost">Biaya Bensin</div>
+                            <div class="breakdown-value">
+                                <span id="fuel-cost-breakdown">IDR 0</span>
+                                <span class="breakdown-percentage" id="fuel-cost-percentage">0%</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label" data-i18n="electricityCost">Biaya Listrik</div>
+                            <div class="breakdown-value">
+                                <span id="electricity-cost-breakdown">IDR 0</span>
+                                <span class="breakdown-percentage" id="electricity-cost-percentage">0%</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label" data-i18n="totalCost">Total Biaya</div>
+                            <div class="breakdown-value total">
+                                <span id="total-cost-breakdown">IDR 0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- QR Code section -->
+        <section class="qr-section" aria-labelledby="qr-section-title">
+            <h2 id="qr-section-title" data-i18n="shareCalculator">
+                <i class="fas fa-share-alt"></i> Bagikan Kalkulator
+            </h2>
+            <div class="qr-container">
+                <div class="qr-code-wrapper">
+                    <div id="qrcode" aria-label="QR code for sharing this calculator"></div>
+                </div>
+                <div class="qr-instructions">
+                    <p data-i18n="scanToShare">
+                        <i class="fas fa-qrcode"></i> Scan kode QR untuk membagikan kalkulator ini
+                    </p>
+                    <p class="qr-url" id="qr-url-display">URL akan muncul di sini</p>
+                    <button class="copy-url-btn" id="copy-url-btn" data-i18n="copyUrl">
+                        <i class="fas fa-copy"></i> Salin URL
+                    </button>
+                </div>
+            </div>
+
+            <!-- Deployment Instructions (shown in development mode) -->
+            <div id="deployment-instructions" style="display: none; margin-top: 20px;"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-disclaimer">
+                    <p data-i18n="disclaimer">
+                        <i class="fas fa-exclamation-circle"></i> *Perhitungan berdasarkan parameter default. Hasil aktual mungkin berbeda berdasarkan kebiasaan mengemudi, kondisi kendaraan, dan faktor lainnya.
+                    </p>
+                </div>
+                <div class="footer-info">
+                    <p data-i18n="forIndonesia">Dikembangkan khusus untuk pasar Indonesia</p>
+                    <p>© 2024 BYD Indonesia. <span data-i18n="allRightsReserved">Hak Cipta Dilindungi.</span></p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" data-i18n="privacyPolicy">Kebijakan Privasi</a>
+                    <span class="separator">•</span>
+                    <a href="#" data-i18n="termsOfUse">Syarat Penggunaan</a>
+                    <span class="separator">•</span>
+                    <a href="#" data-i18n="contactUs">Hubungi Kami</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="lib/chart.js"></script>
+    <script src="lib/qrcode.min.js"></script>
+
+    <!-- Configuration (optional) -->
+    <script src="config.js"></script>
+
+    <!-- Main Application Script -->
+    <script src="script.js"></script>
+
+    <!-- No JavaScript fallback message -->
+    <noscript>
+        <div class="noscript-warning">
+            <h2>JavaScript Diperlukan</h2>
+            <p>Kalkulator ini memerlukan JavaScript untuk berfungsi. Silakan aktifkan JavaScript di browser Anda.</p>
+        </div>
+    </noscript>
+</body>
+</html>
