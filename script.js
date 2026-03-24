@@ -573,10 +573,69 @@ class QRCodeGenerator {
     constructor() {
         this.qrCode = null;
         this.defaultSize = 200;
+        this.config = this.loadConfig();
     }
 
     /**
-     * Generate QR code for current URL
+     * Load configuration
+     */
+    loadConfig() {
+        // Default configuration
+        const defaultConfig = {
+            PRODUCTION_URL: 'https://your-username.github.io/byd-dmi-calculator/',
+            LOCAL_URL: 'http://localhost:8080/',
+            QR_CODE_SIZE: 200,
+            QR_CODE_DARK_COLOR: '#1E5128',
+            QR_CODE_LIGHT_COLOR: '#ffffff',
+            DEBUG: false
+        };
+
+        // Try to load external config
+        if (typeof CONFIG !== 'undefined') {
+            return { ...defaultConfig, ...CONFIG };
+        }
+
+        return defaultConfig;
+    }
+
+    /**
+     * Detect if we're in production environment
+     */
+    isProduction() {
+        const hostname = window.location.hostname;
+        return hostname !== 'localhost' &&
+               hostname !== '127.0.0.1' &&
+               !hostname.startsWith('192.168.') &&
+               !hostname.startsWith('10.');
+    }
+
+    /**
+     * Get appropriate URL for QR code
+     */
+    getQrUrl() {
+        // If we have a custom URL in config, use it
+        if (this.config.PRODUCTION_URL &&
+            this.config.PRODUCTION_URL !== 'https://your-username.github.io/byd-dmi-calculator/') {
+            return this.config.PRODUCTION_URL;
+        }
+
+        // In production, use current URL
+        if (this.isProduction()) {
+            const currentUrl = window.location.origin + window.location.pathname;
+            // Remove trailing filename if present
+            return currentUrl.replace(/[^/]*\.html$/, '');
+        }
+
+        // In development, show warning and use local URL
+        console.warn('⚠️  DEVELOPMENT MODE: QR code points to localhost');
+        console.warn('   Mobile devices cannot access this URL.');
+        console.warn('   Deploy to GitHub Pages for mobile access.');
+
+        return this.config.LOCAL_URL;
+    }
+
+    /**
+     * Generate QR code with intelligent URL selection
      */
     generateQRCode() {
         const container = document.getElementById('qrcode');
@@ -585,25 +644,44 @@ class QRCodeGenerator {
         // Clear existing QR code
         container.innerHTML = '';
 
-        // Get current URL
-        const url = window.location.href;
+        // Get appropriate URL
+        const url = this.getQrUrl();
 
         // Update URL display
         const urlDisplay = document.getElementById('qr-url-display');
         if (urlDisplay) {
             urlDisplay.textContent = url;
+
+            // Add environment indicator
+            if (!this.isProduction()) {
+                urlDisplay.innerHTML += ' <span style="color: #ff6b6b; font-size: 0.9em;">(Local Development - Mobile cannot access)</span>';
+            } else {
+                urlDisplay.innerHTML += ' <span style="color: #4CAF50; font-size: 0.9em;">(Production - Mobile accessible)</span>';
+            }
+        }
+
+        // Show deployment instructions in development
+        if (!this.isProduction()) {
+            this.showDeploymentInstructions();
         }
 
         try {
             // Generate QR code
             this.qrCode = new QRCode(container, {
                 text: url,
-                width: this.defaultSize,
-                height: this.defaultSize,
-                colorDark: "#1E5128",
-                colorLight: "#ffffff",
+                width: this.config.QR_CODE_SIZE || this.defaultSize,
+                height: this.config.QR_CODE_SIZE || this.defaultSize,
+                colorDark: this.config.QR_CODE_DARK_COLOR || "#1E5128",
+                colorLight: this.config.QR_CODE_LIGHT_COLOR || "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
+
+            // Log URL for debugging
+            if (this.config.DEBUG) {
+                console.log('QR Code generated for URL:', url);
+                console.log('Environment:', this.isProduction() ? 'Production' : 'Development');
+            }
+
         } catch (error) {
             console.error('QR code generation failed:', error);
             container.innerHTML = '<p>QR code generation failed</p>';
@@ -611,14 +689,42 @@ class QRCodeGenerator {
     }
 
     /**
-     * Copy current URL to clipboard
+     * Show deployment instructions in development mode
+     */
+    showDeploymentInstructions() {
+        const instructions = document.getElementById('deployment-instructions');
+        if (!instructions) return;
+
+        instructions.innerHTML = `
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                <h3 style="margin-top: 0; color: #856404;">🚀 Deploy for Mobile Access</h3>
+                <p>To make this calculator accessible on mobile devices:</p>
+                <ol style="margin-bottom: 10px;">
+                    <li><strong>Update config.js</strong> with your GitHub Pages URL</li>
+                    <li><strong>Push to GitHub</strong>: <code>git push origin main</code></li>
+                    <li><strong>Enable GitHub Pages</strong> in repository Settings</li>
+                    <li><strong>Share the URL</strong> or scan the QR code</li>
+                </ol>
+                <p style="margin-bottom: 0;">See <a href="DEPLOYMENT.md" target="_blank">DEPLOYMENT.md</a> for detailed instructions.</p>
+            </div>
+        `;
+        instructions.style.display = 'block';
+    }
+
+    /**
+     * Copy appropriate URL to clipboard
      */
     async copyUrlToClipboard() {
-        const url = window.location.href;
+        const url = this.getQrUrl();
 
         try {
             await navigator.clipboard.writeText(url);
             showNotification(this.languageManager?.t('copySuccess') || 'URL copied successfully!', 'success');
+
+            // Log what was copied
+            if (this.config.DEBUG) {
+                console.log('Copied to clipboard:', url);
+            }
         } catch (error) {
             console.error('Failed to copy URL:', error);
             showNotification(this.languageManager?.t('copyError') || 'Failed to copy URL', 'error');

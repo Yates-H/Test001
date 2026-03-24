@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Diagnosis</title>
+    <script src="lib/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .diagnosis-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .success {
+            border-color: #4CAF50;
+            background: #f1f8e9;
+        }
+        .error {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        .warning {
+            border-color: #ff9800;
+            background: #fff3e0;
+        }
+        .qr-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        button {
+            background: #1E5128;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2e7d32;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #ccc;
+        }
+        .test-result.pass {
+            border-left-color: #4CAF50;
+        }
+        .test-result.fail {
+            border-left-color: #f44336;
+        }
+        .test-result.warning {
+            border-left-color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Scanner Diagnosis</h1>
+
+    <div class="diagnosis-section">
+        <h2>Problem Analysis</h2>
+        <p>Common reasons why QR codes don't work:</p>
+        <ol>
+            <li><strong>Localhost URL</strong>: Many mobile devices cannot access localhost URLs</li>
+            <li><strong>HTTP protocol</strong>: Modern devices (especially iOS) may block HTTP URLs</li>
+            <li><strong>Network issues</strong>: Device not on same network as server</li>
+            <li><strong>QR code quality</strong>: Poor contrast or resolution</li>
+            <li><strong>URL too long</strong>: Some QR scanners have URL length limits</li>
+        </ol>
+    </div>
+
+    <div class="diagnosis-section">
+        <h2>Test 1: Check Current Environment</h2>
+        <div id="env-info"></div>
+        <button onclick="checkEnvironment()">Check Environment</button>
+    </div>
+
+    <div class="diagnosis-section">
+        <h2>Test 2: Test QR Code Generation</h2>
+        <div class="url-display" id="current-url-display"></div>
+        <div class="qr-container">
+            <div id="qrcode-test"></div>
+        </div>
+        <button onclick="testQRGeneration()">Generate Test QR Code</button>
+        <div id="qr-test-result"></div>
+    </div>
+
+    <div class="diagnosis-section">
+        <h2>Test 3: Test Different URLs</h2>
+        <div class="test-result" id="test-localhost"></div>
+        <div class="test-result" id="test-https"></div>
+        <div class="test-result" id="test-short-url"></div>
+        <button onclick="testAllURLs()">Test All URL Types</button>
+    </div>
+
+    <div class="diagnosis-section">
+        <h2>Test 4: QR Code Scanner Compatibility</h2>
+        <p>Scan these test QR codes with your device:</p>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 200px;">
+                <h3>Test 1: Google.com</h3>
+                <div id="qrcode-google" style="width: 200px; height: 200px; margin: 0 auto;"></div>
+                <p>Should open google.com</p>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <h3>Test 2: Simple Text</h3>
+                <div id="qrcode-text" style="width: 200px; height: 200px; margin: 0 auto;"></div>
+                <p>Should show "Hello World" text</p>
+            </div>
+        </div>
+        <button onclick="generateTestQRs()">Generate Test QR Codes</button>
+    </div>
+
+    <div class="diagnosis-section">
+        <h2>Solutions</h2>
+        <div id="solutions"></div>
+    </div>
+
+    <script>
+        function checkEnvironment() {
+            const envDiv = document.getElementById('env-info');
+            const info = [
+                `Current URL: ${window.location.href}`,
+                `Protocol: ${window.location.protocol}`,
+                `Hostname: ${window.location.hostname}`,
+                `Port: ${window.location.port || '80/443'}`,
+                `User Agent: ${navigator.userAgent}`,
+                `QRCode library loaded: ${typeof QRCode !== 'undefined' ? 'Yes' : 'No'}`,
+                `Screen size: ${window.innerWidth} × ${window.innerHeight}`
+            ];
+
+            envDiv.innerHTML = '<ul>' + info.map(item => `<li>${item}</li>`).join('') + '</ul>';
+        }
+
+        function testQRGeneration() {
+            const url = window.location.href;
+            const display = document.getElementById('current-url-display');
+            const container = document.getElementById('qrcode-test');
+            const resultDiv = document.getElementById('qr-test-result');
+
+            display.textContent = url;
+            container.innerHTML = '';
+
+            try {
+                new QRCode(container, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                resultDiv.innerHTML = '<div class="test-result pass">✓ QR code generated successfully</div>';
+                resultDiv.innerHTML += `<div class="test-result ${url.includes('localhost') ? 'warning' : 'pass'}">${url.includes('localhost') ? '⚠️ Warning: Using localhost URL - may not work on mobile devices' : '✓ Using public URL'}</div>`;
+                resultDiv.innerHTML += `<div class="test-result ${url.startsWith('http:') ? 'warning' : 'pass'}">${url.startsWith('http:') ? '⚠️ Warning: Using HTTP (not HTTPS) - may be blocked on some devices' : '✓ Using HTTPS'}</div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result fail">✗ QR code generation failed: ${error.message}</div>`;
+            }
+        }
+
+        function testAllURLs() {
+            const tests = [
+                { id: 'test-localhost', url: 'http://localhost:8080/', name: 'Localhost' },
+                { id: 'test-https', url: 'https://example.com/byd-dmi-calculator/', name: 'HTTPS URL' },
+                { id: 'test-short-url', url: 'https://short.url/byd', name: 'Short URL' }
+            ];
+
+            tests.forEach(test => {
+                const div = document.getElementById(test.id);
+                div.innerHTML = `<strong>${test.name}:</strong> ${test.url}`;
+                div.className = 'test-result';
+
+                if (test.url.includes('localhost')) {
+                    div.className += ' warning';
+                    div.innerHTML += '<br>⚠️ May not work on mobile devices';
+                } else if (test.url.startsWith('https:')) {
+                    div.className += ' pass';
+                    div.innerHTML += '<br>✓ Should work on most devices';
+                }
+            });
+        }
+
+        function generateTestQRs() {
+            // Test 1: Google.com
+            try {
+                new QRCode(document.getElementById('qrcode-google'), {
+                    text: 'https://www.google.com',
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff"
+                });
+            } catch (e) {}
+
+            // Test 2: Simple text
+            try {
+                new QRCode(document.getElementById('qrcode-text'), {
+                    text: 'Hello World',
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff"
+                });
+            } catch (e) {}
+
+            // Show solutions
+            const solutionsDiv = document.getElementById('solutions');
+            const currentUrl = window.location.href;
+            let solutions = '<h3>Recommended Solutions:</h3><ol>';
+
+            if (currentUrl.includes('localhost')) {
+                solutions += '<li><strong>Deploy to public URL:</strong> Use GitHub Pages, Netlify, or Vercel for public access</li>';
+            }
+
+            if (currentUrl.startsWith('http:')) {
+                solutions += '<li><strong>Use HTTPS:</strong> Deploy with HTTPS enabled (most hosting platforms provide this)</li>';
+            }
+
+            solutions += '<li><strong>Test with known URLs:</strong> Scan the Google.com QR code above to verify your scanner works</li>';
+            solutions += '<li><strong>Check network:</strong> Ensure mobile device is on same network if testing locally</li>';
+            solutions += '<li><strong>Use URL shortener:</strong> Consider using bit.ly or similar for shorter URLs</li>';
+            solutions += '</ol>';
+
+            solutionsDiv.innerHTML = solutions;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkEnvironment();
+            generateTestQRs();
+        });
+    </script>
+</body>
+</html>
