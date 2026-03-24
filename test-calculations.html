@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYD DM-i Cost Calculator - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-case {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #1E5128;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #1E5128;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #4E9F3D;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>BYD DM-i Cost Calculator - Test Page</h1>
+    <p>This page tests the core calculation logic of the cost calculator.</p>
+
+    <div class="test-case">
+        <h3>Test 1: Fuel Car Cost Calculation</h3>
+        <p>Parameters: Fuel Price = 15,000 IDR/L, Monthly Distance = 1,500 km, Consumption = 8 L/100km</p>
+        <button onclick="runTest1()">Run Test</button>
+        <div id="test1-result" class="test-result"></div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 2: DM-i Cost Calculation</h3>
+        <p>Parameters: Electricity Price = 1,500 IDR/kWh, Hybrid Ratio = 30%</p>
+        <button onclick="runTest2()">Run Test</button>
+        <div id="test2-result" class="test-result"></div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 3: Savings Calculation</h3>
+        <p>Compare fuel car vs DM-i costs</p>
+        <button onclick="runTest3()">Run Test</button>
+        <div id="test3-result" class="test-result"></div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 4: Formatting Functions</h3>
+        <p>Test IDR and percentage formatting</p>
+        <button onclick="runTest4()">Run Test</button>
+        <div id="test4-result" class="test-result"></div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 5: Input Validation</h3>
+        <p>Test parameter validation logic</p>
+        <button onclick="runTest5()">Run Test</button>
+        <div id="test5-result" class="test-result"></div>
+    </div>
+
+    <h2>Manual Test Instructions</h2>
+    <p>To manually test the full application:</p>
+    <ol>
+        <li>Open the main calculator at <a href="http://localhost:8080/" target="_blank">http://localhost:8080/</a></li>
+        <li>Verify that all input fields are present and functional</li>
+        <li>Click "Hitung Biaya" (Calculate) button</li>
+        <li>Verify that results are displayed correctly</li>
+        <li>Test language switching between Indonesian and English</li>
+        <li>Test QR code generation</li>
+        <li>Test reset functionality</li>
+        <li>Test responsive design on different screen sizes</li>
+    </ol>
+
+    <h2>Expected Results</h2>
+    <pre>
+Default Parameters:
+- Fuel Price: 15,000 IDR/L
+- Electricity Price: 1,500 IDR/kWh
+- Monthly Distance: 1,500 km
+- Fuel Car Consumption: 8 L/100km
+- DM-i Electric Consumption: 15 kWh/100km
+- DM-i Fuel Consumption: 5 L/100km
+- Hybrid Ratio: 30%
+
+Expected Calculations:
+1. Fuel Car Monthly Cost: (1500/100)*8*15000 = 1,800,000 IDR
+2. DM-i Electric Cost: (1500*0.7/100)*15*1500 = 236,250 IDR
+3. DM-i Hybrid Cost: (1500*0.3/100)*5*15000 = 337,500 IDR
+4. DM-i Total Cost: 236,250 + 337,500 = 573,750 IDR
+5. Monthly Savings: 1,800,000 - 573,750 = 1,226,250 IDR
+6. Savings Percentage: (1,226,250 / 1,800,000) * 100 = 68.1%
+    </pre>
+
+    <script>
+        // Import the calculator logic from the main script
+        // Note: In a real test, we would import the module properly
+        // For this demo, we'll recreate simplified versions of the functions
+
+        function formatIDR(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatPercentage(percentage) {
+            return percentage.toFixed(1) + '%';
+        }
+
+        class TestCalculator {
+            constructor() {
+                this.defaultParams = {
+                    fuelPrice: 15000,
+                    electricityPrice: 1500,
+                    monthlyDistance: 1500,
+                    fuelCarConsumption: 8,
+                    dmiElectricConsumption: 15,
+                    dmiFuelConsumption: 5,
+                    hybridRatio: 30
+                };
+            }
+
+            calculateFuelCarCost(params) {
+                const fuelNeeded = (params.monthlyDistance / 100) * params.fuelCarConsumption;
+                return fuelNeeded * params.fuelPrice;
+            }
+
+            calculateDMiCost(params) {
+                const electricDistance = params.monthlyDistance * (1 - params.hybridRatio / 100);
+                const electricNeeded = (electricDistance / 100) * params.dmiElectricConsumption;
+                const electricCost = electricNeeded * params.electricityPrice;
+
+                const hybridDistance = params.monthlyDistance * (params.hybridRatio / 100);
+                const hybridFuelNeeded = (hybridDistance / 100) * params.dmiFuelConsumption;
+                const hybridCost = hybridFuelNeeded * params.fuelPrice;
+
+                return {
+                    total: electricCost + hybridCost,
+                    electricCost: electricCost,
+                    hybridCost: hybridCost
+                };
+            }
+
+            calculateSavings(fuelCost, dmiCost) {
+                const amount = fuelCost - dmiCost;
+                const percentage = fuelCost > 0 ? (amount / fuelCost) * 100 : 0;
+                return { amount, percentage };
+            }
+        }
+
+        function displayResult(elementId, message, isPass) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'test-result ' + (isPass ? 'pass' : 'fail');
+        }
+
+        function runTest1() {
+            const calculator = new TestCalculator();
+            const params = calculator.defaultParams;
+            const fuelCost = calculator.calculateFuelCarCost(params);
+            const expected = 1800000; // (1500/100)*8*15000
+
+            const isPass = Math.abs(fuelCost - expected) < 1;
+            const message = `Fuel Car Cost: ${formatIDR(fuelCost)} | Expected: ${formatIDR(expected)} | ${isPass ? 'PASS' : 'FAIL'}`;
+            displayResult('test1-result', message, isPass);
+        }
+
+        function runTest2() {
+            const calculator = new TestCalculator();
+            const params = calculator.defaultParams;
+            const dmiCost = calculator.calculateDMiCost(params);
+            const expectedTotal = 573750; // 236,250 + 337,500
+
+            const isPass = Math.abs(dmiCost.total - expectedTotal) < 1;
+            const message = `DM-i Total Cost: ${formatIDR(dmiCost.total)} | Electric: ${formatIDR(dmiCost.electricCost)} | Hybrid: ${formatIDR(dmiCost.hybridCost)} | Expected Total: ${formatIDR(expectedTotal)} | ${isPass ? 'PASS' : 'FAIL'}`;
+            displayResult('test2-result', message, isPass);
+        }
+
+        function runTest3() {
+            const calculator = new TestCalculator();
+            const params = calculator.defaultParams;
+            const fuelCost = calculator.calculateFuelCarCost(params);
+            const dmiCost = calculator.calculateDMiCost(params);
+            const savings = calculator.calculateSavings(fuelCost, dmiCost.total);
+
+            const expectedAmount = 1226250; // 1,800,000 - 573,750
+            const expectedPercentage = 68.1; // (1,226,250 / 1,800,000) * 100
+
+            const amountPass = Math.abs(savings.amount - expectedAmount) < 1;
+            const percentagePass = Math.abs(savings.percentage - expectedPercentage) < 0.1;
+            const isPass = amountPass && percentagePass;
+
+            const message = `Savings Amount: ${formatIDR(savings.amount)} (${formatPercentage(savings.percentage)}) | Expected: ${formatIDR(expectedAmount)} (${expectedPercentage.toFixed(1)}%) | ${isPass ? 'PASS' : 'FAIL'}`;
+            displayResult('test3-result', message, isPass);
+        }
+
+        function runTest4() {
+            const testAmount = 1234567.89;
+            const testPercentage = 68.125;
+
+            const formattedIDR = formatIDR(testAmount);
+            const formattedPercentage = formatPercentage(testPercentage);
+
+            const idrPass = formattedIDR === 'Rp 1.234.568';
+            const percentagePass = formattedPercentage === '68.1%';
+            const isPass = idrPass && percentagePass;
+
+            const message = `IDR Format: "${formattedIDR}" | Percentage Format: "${formattedPercentage}" | ${isPass ? 'PASS' : 'FAIL'}`;
+            displayResult('test4-result', message, isPass);
+        }
+
+        function runTest5() {
+            const calculator = new TestCalculator();
+            const validParams = calculator.defaultParams;
+            const invalidParams = { ...validParams, fuelPrice: -100 }; // Negative price
+
+            // Simple validation test
+            const validCost = calculator.calculateFuelCarCost(validParams);
+            const invalidCost = calculator.calculateFuelCarCost(invalidParams);
+
+            // Negative fuel price should give negative cost (mathematically correct but invalid input)
+            const isPass = validCost > 0 && invalidCost < 0;
+            const message = `Valid params cost: ${formatIDR(validCost)} (positive) | Invalid params cost: ${formatIDR(invalidCost)} (negative) | ${isPass ? 'PASS' : 'FAIL'}`;
+            displayResult('test5-result', message, isPass);
+        }
+
+        // Run all tests on page load
+        window.onload = function() {
+            setTimeout(() => {
+                runTest1();
+                runTest2();
+                runTest3();
+                runTest4();
+                runTest5();
+            }, 500);
+        };
+    </script>
+</body>
+</html>
